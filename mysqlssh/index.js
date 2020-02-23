@@ -45,15 +45,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // 'lib/query/compiler', respectively.
 // MySQL Client
 // -------
-function Client_MySQL(config) {
+function Client_MySQLSSH(config) {
   _client2.default.call(this, config);
 }
-(0, _inherits2.default)(Client_MySQL, _client2.default);
+(0, _inherits2.default)(Client_MySQLSSH, _client2.default);
 
-(0, _lodash.assign)(Client_MySQL.prototype, {
-  dialect: 'mysql',
+(0, _lodash.assign)(Client_MySQLSSH.prototype, {
+  dialect: 'mysqlssh',
 
-  driverName: 'mysql',
+  driverName: 'mysqlssh',
 
   _driver: function _driver() {
     return require('mysql');
@@ -84,7 +84,7 @@ function Client_MySQL(config) {
 
   // Get a raw connection, called by the `pool` whenever a new
   // connection needs to be added to the pool.
-  acquireRawConnection: function acquireRawConnection() {
+  acquireRawConnection_DIST: function acquireRawConnection() {
     var _this = this;
 
     return new _bluebird2.default(function (resolver, rejecter) {
@@ -106,14 +106,14 @@ function Client_MySQL(config) {
 
   // Used to explicitly close a connection, called internally by the pool
   // when a connection times out or the pool is shutdown.
-  destroyRawConnection: function destroyRawConnection(connection) {
+  destroyRawConnection_DIST: function destroyRawConnection(connection) {
     return _bluebird2.default.fromCallback(connection.end.bind(connection)).catch(function (err) {
       connection.__knex__disposed = err;
     }).finally(function () {
       return connection.removeAllListeners();
     });
   },
-  validateConnection: function validateConnection(connection) {
+  validateConnection_DIST: function validateConnection(connection) {
     if (connection.state === 'connected' || connection.state === 'authenticated') {
       return true;
     }
@@ -217,5 +217,5 @@ function Client_MySQL(config) {
   }
 });
 
-exports.default = Client_MySQL;
+exports.default = Client_MySQLSSH;
 module.exports = exports['default'];
