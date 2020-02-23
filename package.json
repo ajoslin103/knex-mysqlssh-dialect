@@ -1,0 +1,33 @@
+{
+  "name": "knex-mysqlssh-dialect",
+  "version": "1.0.0",
+  "description": "A minimal insertion of the mysql-ssh library into a copy of the Knex MySQL dialect",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ajoslin103/knex-mysqlssh-dialect.git"
+  },
+  "keywords": [
+    "node",
+    "knex",
+    "dialect",
+    "mysql",
+    "ssh",
+    "adonis",
+    "remote",
+    "tunnel",
+    "jump"
+  ],
+  "author": "allen joslin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ajoslin103/knex-mysqlssh-dialect/issues"
+  },
+  "homepage": "https://github.com/ajoslin103/knex-mysqlssh-dialect#readme",
+  "dependencies": {
+    "mysql-ssh": "^1.0.6"
+  }
+}
