@@ -29,7 +29,7 @@ Pass the entirety to Knex as your config, and Knex will do the rest.
 
 ## Example
 
-My project uses the excellent [AdonisJS](https://adonisjs.com/) Node.js framework, if anyone can contribute other samples we could expand this section.
+My project uses the excellent AdonisJS Node.js framework, if anyone can contribute other samples we could expand this section.
 
 const fs = require('fs');
 const jumpKeyFile = Env.get('JUMP_KEYFILE', '');
@@ -67,6 +67,12 @@ From mysql-ssh: sshConfig should be an object according to the ssh2 package.
 From mysql-ssh: dbConfig should be an object according to the mysql2 package.
 
 FUTURE ISSUE: the ssh2 and mysql2 packages note that their config objects will, in the future, not be accepted if they contain unknown fields.  Currently, the Knex dialects do not subselect the database fields.
+
+## Credits
+
+This package would not have been possible with the fine work of the developers and maintainers of [at least] the following packages
+
+[AdonisJS](https://adonisjs.com/) [Knex](http://knexjs.org/) [mysql-ssh](https://github.com/grrr-amsterdam/mysql-ssh) [mysql2](https://github.com/sidorares/node-mysql2) [ssh2](https://github.com/mscdex/ssh2)
 
 ## Other
 
