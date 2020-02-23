@@ -7,11 +7,11 @@ This is a minimal insertion of the mysql-ssh library into a copy of the Knex MyS
 
 I created this project becuse the database I was trying to connect to could only be protected (beyond username/password) by IP whitelisting.  
 
-And since my prject is hosted on Heroku, where I get a new IP address for every deploymnet, I am unable to maintain an unchanging IP address.
+And since my project is hosted on Heroku, where I get a new IP address for every deploymnet, I am unable to maintain an unchanging IP address.
 
-Unfortuneately I could not just tunnel to the database server, because it's a shared host they do not support port forwarding on their ssh connections.
+Unfortunately I could not just tunnel to the database server, because it's a shared host they do not support port forwarding on their ssh connections.
 
-So I needed an ssh capable, port-forwarding, machine to serve as Jump server so that I could forward my connection from a server whose IP address would not change.
+So I needed an ssh capable, port-forwarding, machine to serve as a Jump server so that I could forward my connection from a server whose IP address would not change.
 
 I provisioned a minimal DigitalOcean Ubuntu droplet, which will maintain it's originally provisioned IP address until it's decommissioned to use as my Jump server.
 
@@ -25,12 +25,13 @@ Define your database config in two parts: the ssh config for your Jump server; a
 
 Require the dialect and reference it as 'client' in your configuration
 
-Pass the entirety to Knex as your config, and Knex will do the rest.
+Pass the config to Knex, and Knex will see that the client is of type Client and use the supplied dialect.
 
 ## Example
 
 My project uses the excellent AdonisJS Node.js framework, if anyone can contribute other samples we could expand this section.
 
+```
 const fs = require('fs');
 const jumpKeyFile = Env.get('JUMP_KEYFILE', '');
 const jumpKey = jumpKeyFile ? fs.readFileSync(jumpKeyFile, { encoding: 'utf8' }).trim() : '';
@@ -55,6 +56,7 @@ module.exports = {
         },
     },
 }
+```
 
 ## Notes
 
@@ -73,6 +75,8 @@ FUTURE ISSUE: the ssh2 and mysql2 packages note that their config objects will, 
 This package would not have been possible with the fine work of the developers and maintainers of [at least] the following packages
 
 [AdonisJS](https://adonisjs.com/) [Knex](http://knexjs.org/) [mysql-ssh](https://github.com/grrr-amsterdam/mysql-ssh) [mysql2](https://github.com/sidorares/node-mysql2) [ssh2](https://github.com/mscdex/ssh2)
+
+Some inspiration and understanding of Knex dialects came from here: [MariaDB Driver for Knex](https://wildwolf.name/mariadb-driver-for-knex/)
 
 ## Other
 
