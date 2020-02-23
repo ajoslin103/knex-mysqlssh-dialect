@@ -6,7 +6,7 @@ var _inherits = require('inherits');
 
 var _inherits2 = _interopRequireDefault(_inherits);
 
-var _columncompiler = require('../../../schema/columncompiler');
+var _columncompiler = require('knex/lib/schema/columncompiler');
 
 var _columncompiler2 = _interopRequireDefault(_columncompiler);
 

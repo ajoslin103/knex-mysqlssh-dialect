@@ -6,7 +6,7 @@ var _inherits = require('inherits');
 
 var _inherits2 = _interopRequireDefault(_inherits);
 
-var _tablecompiler = require('../../../schema/tablecompiler');
+var _tablecompiler = require('knex/lib/schema/tablecompiler');
 
 var _tablecompiler2 = _interopRequireDefault(_tablecompiler);
 

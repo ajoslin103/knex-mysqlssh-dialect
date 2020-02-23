@@ -6,7 +6,7 @@ var _inherits = require('inherits');
 
 var _inherits2 = _interopRequireDefault(_inherits);
 
-var _client = require('../../client');
+var _client = require('knex/lib/client');
 
 var _client2 = _interopRequireDefault(_client);
 
@@ -36,7 +36,7 @@ var _columncompiler2 = _interopRequireDefault(_columncompiler);
 
 var _lodash = require('lodash');
 
-var _string = require('../../query/string');
+var _string = require('knex/lib/query/string');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 

@@ -14,7 +14,7 @@ var _inherits2 = require('babel-runtime/helpers/inherits');
 
 var _inherits3 = _interopRequireDefault(_inherits2);
 
-var _transaction = require('../../transaction');
+var _transaction = require('knex/lib/transaction');
 
 var _transaction2 = _interopRequireDefault(_transaction);
 
