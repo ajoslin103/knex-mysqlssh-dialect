@@ -56,7 +56,7 @@ function Client_MySQLSSH(config) {
   driverName: 'mysqlssh',
 
   _driver: function _driver() {
-    return require('mysql');
+    return require('mysql-ssh');
   },
   queryCompiler: function queryCompiler() {
     return new (Function.prototype.bind.apply(_compiler2.default, [null].concat([this], Array.prototype.slice.call(arguments))))();
@@ -82,43 +82,62 @@ function Client_MySQLSSH(config) {
   },
 
 
-  // Get a raw connection, called by the `pool` whenever a new
-  // connection needs to be added to the pool.
-  acquireRawConnection_DIST: function acquireRawConnection() {
+  // // Get a raw connection, called by the `pool` whenever a new
+  // // connection needs to be added to the pool.
+  // acquireRawConnection_DIST: function acquireRawConnection() {
+  //   var _this = this;
+
+  //   return new _bluebird2.default(function (resolver, rejecter) {
+  //     var connection = _this.driver.createConnection(_this.connectionSettings);
+  //     connection.on('error', function (err) {
+  //       connection.__knex__disposed = err;
+  //     });
+  //     connection.connect(function (err) {
+  //       if (err) {
+  //         // if connection is rejected, remove listener that was registered above...
+  //         connection.removeAllListeners();
+  //         return rejecter(err);
+  //       }
+  //       resolver(connection);
+  //     });
+  //   });
+  // },
+
+  acquireRawConnection: function acquireRawConnection() {
     var _this = this;
-
     return new _bluebird2.default(function (resolver, rejecter) {
-      var connection = _this.driver.createConnection(_this.connectionSettings);
-      connection.on('error', function (err) {
-        connection.__knex__disposed = err;
-      });
-      connection.connect(function (err) {
-        if (err) {
-          // if connection is rejected, remove listener that was registered above...
-          connection.removeAllListeners();
-          return rejecter(err);
-        }
-        resolver(connection);
-      });
+      return _this.driver.connect(
+        _this.connectionSettings.sshConfig,
+        _this.connectionSettings
+      )
+        .then(connection => resolver(connection))
+        .catch(err => rejecter(err))
     });
   },
 
+  destroyRawConnection: function destroyRawConnection(connection) {
+    return _this.driver.close();
+  },
 
-  // Used to explicitly close a connection, called internally by the pool
-  // when a connection times out or the pool is shutdown.
-  destroyRawConnection_DIST: function destroyRawConnection(connection) {
-    return _bluebird2.default.fromCallback(connection.end.bind(connection)).catch(function (err) {
-      connection.__knex__disposed = err;
-    }).finally(function () {
-      return connection.removeAllListeners();
-    });
+  validateConnection: function validateConnection(connection) {
+    return connection.stream.readable;
   },
-  validateConnection_DIST: function validateConnection(connection) {
-    if (connection.state === 'connected' || connection.state === 'authenticated') {
-      return true;
-    }
-    return false;
-  },
+
+  // // Used to explicitly close a connection, called internally by the pool
+  // // when a connection times out or the pool is shutdown.
+  // destroyRawConnection_DIST: function destroyRawConnection(connection) {
+  //   return _bluebird2.default.fromCallback(connection.end.bind(connection)).catch(function (err) {
+  //     connection.__knex__disposed = err;
+  //   }).finally(function () {
+  //     return connection.removeAllListeners();
+  //   });
+  // },
+  // validateConnection_DIST: function validateConnection(connection) {
+  //   if (connection.state === 'connected' || connection.state === 'authenticated') {
+  //     return true;
+  //   }
+  //   return false;
+  // },
 
 
   // Grab a connection, run the query via the MySQL streaming interface,
