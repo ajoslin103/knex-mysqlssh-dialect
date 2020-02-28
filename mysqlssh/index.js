@@ -108,7 +108,7 @@ function Client_MySQLSSH(config) {
     return new _bluebird2.default(function (resolver, rejecter) {
       return _this.driver.connect(
         _this.connectionSettings.sshConfig,
-        _this.connectionSettings
+        _this.connectionSettings.dbmsConfig || _this.connectionSettings
       )
         .then(connection => resolver(connection))
         .catch(err => rejecter(err))
