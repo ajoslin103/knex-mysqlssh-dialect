@@ -37,7 +37,35 @@ const jumpKeyFile = Env.get('JUMP_KEYFILE', '');
 const jumpKey = jumpKeyFile ? fs.readFileSync(jumpKeyFile, { encoding: 'utf8' }).trim() : '';
 
 const mysqlssh = require('../knex-dialects/mysqlssh')
+```
+this config works:
 
+```
+module.exports = {
+    mysqlssh: {
+        client: mysqlssh,
+        connection: {
+            sshConfig: {
+                host: Env.get('JUMP_HOST', 'some.ssh.capable.host'),
+                port: Env.get('JUMP_PORT', 22),
+                user: Env.get('JUMP_USER', ''),
+                privateKey: Env.get('JUMP_KEY', jumpKey),
+            },
+            dbmsConfig: {
+                host: Env.get('DB_HOST', 'your.finicky.database.host'),
+                port: Env.get('DB_PORT', 3306),
+                user: Env.get('DB_USER', ''),
+                password: Env.get('DB_PASSWORD', ''),
+                database: Env.get('DB_DATABASE', ''),
+            },
+        },
+    },
+}
+```
+
+as will this config:
+
+```
 module.exports = {
     mysqlssh: {
         client: mysqlssh,
@@ -58,6 +86,8 @@ module.exports = {
 }
 ```
 
+(see explanation below: FUTURE ISSUE)
+
 ## Notes
 
 For development I use a JUMP_KEYFILE environment variable to point to my local keyfile I use to connect to the Jump server.
@@ -68,7 +98,11 @@ From mysql-ssh: sshConfig should be an object according to the ssh2 package.
 
 From mysql-ssh: dbConfig should be an object according to the mysql2 package.
 
-FUTURE ISSUE: the ssh2 and mysql2 packages note that their config objects will, in the future, not be accepted if they contain unknown fields.  Currently, the Knex dialects do not subselect the database fields.
+## FUTURE ISSUE: 
+
+The ssh2 and mysql2 packages note that their config objects will, in the future, not be accepted if they contain unknown fields.  Currently, the Knex dialects do not subselect the database fields.
+
+I chose to accept both styles of config -- the one with a distinct dbmsConfig section avoids console warnings
 
 ## Credits
 
