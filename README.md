@@ -86,7 +86,7 @@ module.exports = {
 }
 ```
 
-(see explanation below: FUTURE ISSUE)
+(see explanation below: Future Issue)
 
 ## Notes
 
@@ -98,7 +98,7 @@ From mysql-ssh: sshConfig should be an object according to the ssh2 package.
 
 From mysql-ssh: dbConfig should be an object according to the mysql2 package.
 
-## FUTURE ISSUE: 
+## Future Issue: 
 
 The ssh2 and mysql2 packages note that their config objects will, in the future, not be accepted if they contain unknown fields.  Currently, the Knex dialects do not subselect the database fields.
 
