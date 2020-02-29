@@ -110,13 +110,16 @@ function Client_MySQLSSH(config) {
         _this.connectionSettings.sshConfig,
         _this.connectionSettings.dbmsConfig || _this.connectionSettings
       )
-        .then(connection => resolver(connection))
+        .then(connection => {
+          resolver.tunnel = _this.driver;
+          resolver(connection);
+        })
         .catch(err => rejecter(err))
     });
   },
 
   destroyRawConnection: function destroyRawConnection(connection) {
-    return _this.driver.close();
+    return connection.tunnel.close();
   },
 
   validateConnection: function validateConnection(connection) {
