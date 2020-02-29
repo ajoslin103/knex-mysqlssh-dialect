@@ -111,7 +111,7 @@ function Client_MySQLSSH(config) {
         _this.connectionSettings.dbmsConfig || _this.connectionSettings
       )
         .then(connection => {
-          resolver.tunnel = _this.driver;
+          connection.tunnel = _this.driver;
           resolver(connection);
         })
         .catch(err => rejecter(err))
