@@ -112,14 +112,21 @@ function Client_MySQLSSH(config) {
       )
         .then(connection => {
           connection.tunnel = _this.driver;
+          connection.tunnel._sql.on('error', function (err) {
+            connection.__knex__disposed = err;
+          });
           resolver(connection);
         })
-        .catch(err => rejecter(err))
+        .catch(err => {
+          connection.removeAllListeners();
+          rejecter(err);
+        })
     });
   },
 
   destroyRawConnection: function destroyRawConnection(connection) {
-    return connection.tunnel.close();
+    connection.tunnel.close();
+    return connection.removeAllListeners();
   },
 
   validateConnection: function validateConnection(connection) {
