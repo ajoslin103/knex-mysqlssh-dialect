@@ -1,6 +1,6 @@
 {
   "name": "knex-mysqlssh-dialect",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A minimal insertion of the mysql-ssh library into a copy of the Knex MySQL dialect",
   "main": "index.js",
   "scripts": {
