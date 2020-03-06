@@ -117,8 +117,8 @@ function Client_MySQLSSH(config) {
               connection.__knex__disposed = err;
             });
           }
-          if (connection.tunnel._ssh) {
-            connection.tunnel._ssh.on('error', function (err) {
+          if (connection.tunnel._conn) {
+            connection.tunnel._conn.on('error', function (err) {
               connection.__knex__disposed = err;
             });
           }
