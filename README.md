@@ -34,11 +34,7 @@ My project uses the excellent AdonisJS Node.js framework, if anyone can contribu
 
 ```
 const mysqlssh = require('knex-mysqlssh-dialect/mysqlssh')
-```
 
-my config:
-
-```
 module.exports = {
   mysqltunnel: {
     client: mysqlssh,
