@@ -6,15 +6,15 @@ Based on a copy of the Knex MySQL dialect, this library uses connection counting
 
 I created this project becuse the database I was trying to connect to could only be protected (beyond username/password) by IP whitelisting.  
 
-And since my project is hosted on Heroku, where I get a new IP address for every deploymnet, I am unable to maintain an unchanging IP address.
+And since my project is hosted on Heroku, I get a new IP address for every deploymnet, so I am unable to maintain an unchanging IP address.
 
-Unfortunately I could not just tunnel to the database server, because it's a shared host they do not support port forwarding on their ssh connections.
+Unfortunately I could not just tunnel to the database server, because it's on a shared hosting server they do not support port forwarding on their ssh connections.
 
-So I needed an ssh capable, port-forwarding, machine to serve as a Jump server so that I could forward my connection from a server whose IP address would not change.
+I needed a fixed-IP, ssh capable, port-forwarding, Jump server so that I could make my connection from a server whose IP address would not change.
 
-I provisioned a minimal DigitalOcean droplet, which will maintain it's originally provisioned IP address until it's decommissioned to use as my Jump server.
+A DigitalOcean droplet, which will maintain it's originally provisioned IP address until it's decommissioned, is a cheap solution requiring zero additional configuration beyond a base install.
 
-I use that Jump server to forward the port on the remote database server to my dynamic Heroku IP address, using a static IP address as the database server requires.
+With a Jump server and this library, I can provide a whitelistable address to my finicky database server from a dynamic Heroku IP address.
 
 ## Installation 
 
@@ -31,11 +31,6 @@ By passing the dialect to Knex it is used as a Client, rather than as the name o
 ## Example
 
 My project uses the excellent AdonisJS Node.js framework, if anyone can contribute other samples we could expand this section.
-
-```
-const fs = require('fs');
-const jumpKeyFile = Env.get('JUMP_KEYFILE', '');
-const jumpKey = jumpKeyFile ? fs.readFileSync(jumpKeyFile, { encoding: 'utf8' }).trim() : '';
 
 const mysqlssh = require('../knex-dialects/mysqlssh')
 ```
