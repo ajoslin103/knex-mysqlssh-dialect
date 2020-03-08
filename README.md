@@ -18,7 +18,9 @@ I use that Jump server to forward the port on the remote database server to my d
 
 ## Installation 
 
+```
 npm i ajoslin103/knex-mysqlssh-dialect
+```
 
 Embed a tunnelConfig object within your Knex connection object, see below for description
 
