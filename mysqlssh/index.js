@@ -59,14 +59,14 @@ var _establishTunnel = function (config) {
         console.error(err);
         reject(new Error(err));
       }
-      console.debug('tunnel established');
+      // console.debug('tunnel established');
       resolve();
     });
   })
 };
 
 var _destroyTunnel = function () {
-  console.debug('closing tunnel');
+  // console.debug('closing tunnel');
   if (_server && _server.close) { _server.close(); }
 };
 
@@ -90,13 +90,13 @@ var _incrementConnections = function (connectionSettings) {
   return tnlPromise
     .then(function () {
       _connectionCnt++;
-      console.debug(`supporting ${_connectionCnt} connections`);
+      // console.debug(`supporting ${_connectionCnt} connections`);
     })
 };
 
 var _decrementConnections = function () {
   _connectionCnt--;
-  console.debug(`${_connectionCnt} connections remaining`);
+  // console.debug(`${_connectionCnt} connections remaining`);
   if (_connectionCnt === 0) { _destroyTunnel() }
 };
 
