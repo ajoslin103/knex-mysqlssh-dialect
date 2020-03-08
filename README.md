@@ -4,17 +4,17 @@ Based on a copy of the Knex MySQL dialect, this library uses connection counting
 
 ## Background
 
-I created this project becuse the database I was trying to connect to could only be protected (beyond username/password) by IP whitelisting.  
+I created this project because the database server I need to use can only accept connections from known IP addresses.
 
-And since my project is hosted on Heroku, I get a new IP address for every deploymnet, so I am unable to maintain an unchanging IP address.
+My project is hosted on Heroku, and I get a new IP address for every deployment, so I am unable to provide an unchanging IP address.
 
-Unfortunately I could not just tunnel to the database server, because it's on a shared hosting server they do not support port forwarding on their ssh connections.
+I can not tunnel to the database server, because it's on a shared hosting server and they do not support port forwarding on their ssh connections for security reasons.
 
-I needed a fixed-IP, ssh capable, port-forwarding, Jump server so that I could make my connection from a server whose IP address would not change.
+I needed a fixed-IP, ssh capable, port-forwarding, Jump server to tunnel into -- so that my connection would come from a server whose IP address could be added to a whitelist.
 
 A DigitalOcean droplet, which will maintain it's originally provisioned IP address until it's decommissioned, is a cheap solution requiring zero additional configuration beyond a base install.
 
-With a Jump server and this library, I can provide a whitelistable address to my finicky database server from a dynamic Heroku IP address.
+With a Jump server and this library, I can connect from a static IP address to my paranoid database server -- even though my code is running on Heroku at a constantly changing IP address.
 
 ## Installation 
 
