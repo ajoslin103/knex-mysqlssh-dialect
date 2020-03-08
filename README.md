@@ -28,18 +28,20 @@ Require the dialect and reference it as the 'client' field in your connection co
 
 By passing the dialect to Knex it is used as a Client, rather than as the name of a knex-supplied dialect to be located
 
-## Example
+## Example Usage
 
 My project uses the excellent AdonisJS Node.js framework, if anyone can contribute other samples we could expand this section.
 
-const mysqlssh = require('../knex-dialects/mysqlssh')
 ```
-this config works:
+const mysqlssh = require('knex-mysqlssh-dialect/mysqlssh')
+```
+
+my config:
 
 ```
 module.exports = {
   mysqltunnel: {
-    client: mysqltunnel,
+    client: mysqlssh,
     connection: {
       host: Env.get('DB_HOST', 'localhost'),
       port: Env.get('DB_PORT', 3306),
