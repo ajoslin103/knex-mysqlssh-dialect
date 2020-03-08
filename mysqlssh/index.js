@@ -84,7 +84,7 @@ var _incrementConnections = function (connectionSettings) {
       password: connectionSettings.tunnelConfig.jmp.auth.pass,
       privateKey: _getPrivateKey(connectionSettings),
     };
-    console.debug(`establishing tunnel from ${config.localHost} to ${config.dstHost} on ${config.localPort} via ${config.host}`);
+    console.debug(`establishing tunnel from ${config.localHost} to ${config.dstHost} via ${config.host} for ${config.localPort}`);
     tnlPromise = _establishTunnel(config);
   }
   return tnlPromise
