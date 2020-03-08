@@ -38,6 +38,71 @@ var _lodash = require('lodash');
 
 var _string = require('knex/lib/query/string');
 
+/* tunnel management tunnel management tunnel management tunnel management */
+
+var _fs = require('fs');
+var _tunnel = require('tunnel-ssh');
+var _server = null;
+
+var _connectionCnt = 0;
+
+var _getPrivateKey = function (connectionSettings) {
+  var privateSSHKeyFile = connectionSettings.tunnelConfig.jmp.auth.keyFile // specify privateSSHKey in production
+  var privateKeyContents = privateSSHKeyFile ? _fs.readFileSync(privateSSHKeyFile, { encoding: 'utf8' }).trim() : 'connectionSettings.tunnelConfig.dst.auth.keyStr'
+  return privateKeyContents;
+};
+
+var _establishTunnel = function (config) {
+  return new Promise(function (resolve, reject) {
+    _server = _tunnel(config, function (err, server) {
+      if (err) {
+        console.error(err);
+        reject(new Error(err));
+      }
+      console.debug('tunnel established');
+      resolve();
+    });
+  })
+};
+
+var _destroyTunnel = function () {
+  console.debug('closing tunnel');
+  if (_server && _server.close) { _server.close(); }
+};
+
+var _incrementConnections = function (connectionSettings) {
+  var tnlPromise = Promise.resolve();
+  if (_connectionCnt === 0) {
+    var config = {
+      host: connectionSettings.tunnelConfig.jmp.host,
+      port: connectionSettings.tunnelConfig.jmp.port,
+      dstHost: connectionSettings.tunnelConfig.dst.host,
+      dstPort: connectionSettings.tunnelConfig.dst.port,
+      localHost: connectionSettings.tunnelConfig.src.host,
+      localPort: connectionSettings.tunnelConfig.src.port,
+      username: connectionSettings.tunnelConfig.jmp.auth.user,
+      password: connectionSettings.tunnelConfig.jmp.auth.pass,
+      privateKey: _getPrivateKey(connectionSettings),
+    };
+    console.debug(`establishing tunnel from ${config.localHost} to ${config.dstHost} on ${config.localPort} via ${config.host}`);
+    tnlPromise = _establishTunnel(config);
+  }
+  return tnlPromise
+    .then(function () {
+      _connectionCnt++;
+      console.debug(`supporting ${_connectionCnt} connections`);
+    })
+};
+
+var _decrementConnections = function () {
+  _connectionCnt--;
+  console.debug(`${_connectionCnt} connections remaining`);
+  if (_connectionCnt === 0) { _destroyTunnel() }
+};
+
+/* tunnel management tunnel management tunnel management tunnel management */
+
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // Always initialize with the "QueryBuilder" and "QueryCompiler"
@@ -45,18 +110,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // 'lib/query/compiler', respectively.
 // MySQL Client
 // -------
-function Client_MySQLSSH(config) {
+function Client_MySQL(config) {
   _client2.default.call(this, config);
 }
-(0, _inherits2.default)(Client_MySQLSSH, _client2.default);
+(0, _inherits2.default)(Client_MySQL, _client2.default);
 
-(0, _lodash.assign)(Client_MySQLSSH.prototype, {
-  dialect: 'mysqlssh',
+(0, _lodash.assign)(Client_MySQL.prototype, {
+  dialect: 'mysql',
 
-  driverName: 'mysqlssh',
+  driverName: 'mysql',
 
   _driver: function _driver() {
-    return require('mysql-ssh');
+    return require('mysql');
   },
   queryCompiler: function queryCompiler() {
     return new (Function.prototype.bind.apply(_compiler2.default, [null].concat([this], Array.prototype.slice.call(arguments))))();
@@ -82,77 +147,49 @@ function Client_MySQLSSH(config) {
   },
 
 
-  // // Get a raw connection, called by the `pool` whenever a new
-  // // connection needs to be added to the pool.
-  // acquireRawConnection_DIST: function acquireRawConnection() {
-  //   var _this = this;
-
-  //   return new _bluebird2.default(function (resolver, rejecter) {
-  //     var connection = _this.driver.createConnection(_this.connectionSettings);
-  //     connection.on('error', function (err) {
-  //       connection.__knex__disposed = err;
-  //     });
-  //     connection.connect(function (err) {
-  //       if (err) {
-  //         // if connection is rejected, remove listener that was registered above...
-  //         connection.removeAllListeners();
-  //         return rejecter(err);
-  //       }
-  //       resolver(connection);
-  //     });
-  //   });
-  // },
-
+  // Get a raw connection, called by the `pool` whenever a new
+  // connection needs to be added to the pool.
   acquireRawConnection: function acquireRawConnection() {
     var _this = this;
     return new _bluebird2.default(function (resolver, rejecter) {
-      return _this.driver.connect(
-        _this.connectionSettings.sshConfig,
-        _this.connectionSettings.dbmsConfig || _this.connectionSettings
-      )
-        .then(connection => {
-          connection.tunnel = _this.driver;
-          if (connection.tunnel._sql) {
-            connection.tunnel._sql.on('error', function (err) {
-              connection.__knex__disposed = err;
-            });
-          }
-          if (connection.tunnel._conn) {
-            connection.tunnel._conn.on('error', function (err) {
-              connection.__knex__disposed = err;
-            });
-          }
-          resolver(connection);
+      return _incrementConnections(_this.connectionSettings)
+        .then(function () {
+          var connection = _this.driver.createConnection(_this.connectionSettings);
+          connection.on('error', function (err) {
+            connection.__knex__disposed = err;
+          });
+          connection.connect(function (err) {
+            if (err) {
+              // if connection is rejected, remove listener that was registered above...
+              connection.removeAllListeners();
+              return rejecter(err);
+            }
+            resolver(connection);
+          })
         })
-        .catch(err => {
-          rejecter(err);
-        })
+        .catch(function (error) {
+          return rejecter(err);
+        });
     });
   },
 
+
+  // Used to explicitly close a connection, called internally by the pool
+  // when a connection times out or the pool is shutdown.
   destroyRawConnection: function destroyRawConnection(connection) {
-    return connection.tunnel.close();
+    _decrementConnections();
+    return _bluebird2.default.fromCallback(connection.end.bind(connection)).catch(function (err) {
+      connection.__knex__disposed = err;
+    }).finally(function () {
+      return connection.removeAllListeners();
+    });
   },
-
   validateConnection: function validateConnection(connection) {
-    return connection.stream.readable;
+    if (connection.state === 'connected' || connection.state === 'authenticated') {
+      return true;
+    }
+    return false;
   },
-
-  // // Used to explicitly close a connection, called internally by the pool
-  // // when a connection times out or the pool is shutdown.
-  // destroyRawConnection_DIST: function destroyRawConnection(connection) {
-  //   return _bluebird2.default.fromCallback(connection.end.bind(connection)).catch(function (err) {
-  //     connection.__knex__disposed = err;
-  //   }).finally(function () {
-  //     return connection.removeAllListeners();
-  //   });
-  // },
-  // validateConnection_DIST: function validateConnection(connection) {
-  //   if (connection.state === 'connected' || connection.state === 'authenticated') {
-  //     return true;
-  //   }
-  //   return false;
-  // },
 
 
   // Grab a connection, run the query via the MySQL streaming interface,
@@ -251,5 +288,5 @@ function Client_MySQLSSH(config) {
   }
 });
 
-exports.default = Client_MySQLSSH;
+exports.default = Client_MySQL;
 module.exports = exports['default'];
