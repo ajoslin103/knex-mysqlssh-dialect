@@ -12,9 +12,9 @@ Unfortunately I could not just tunnel to the database server, because it's a sha
 
 So I needed an ssh capable, port-forwarding, machine to serve as a Jump server so that I could forward my connection from a server whose IP address would not change.
 
-I provisioned a minimal DigitalOcean Ubuntu droplet, which will maintain it's originally provisioned IP address until it's decommissioned to use as my Jump server.
+I provisioned a minimal DigitalOcean droplet, which will maintain it's originally provisioned IP address until it's decommissioned to use as my Jump server.
 
-Enabling me to use that jump server to forward the port on the remote database server to my dynamic Heroku IP address, from the static IP address that the database server requires.
+I use that Jump server to forward the port on the remote database server to my dynamic Heroku IP address, using a static IP address as the database server requires.
 
 ## Installation 
 
