@@ -19,7 +19,7 @@ With a Jump server and this library, I can connect from a static IP address to m
 ## Installation 
 
 ```
-npm i ajoslin103/knex-mysqlssh-dialect
+npm i knex-mysqlssh-dialect
 ```
 
 Embed a tunnelConfig object within your Knex connection object, see below for description
