@@ -48,7 +48,7 @@ var _connectionCnt = 0;
 
 var _getPrivateKey = function (connectionSettings) {
   var privateSSHKeyFile = connectionSettings.tunnelConfig.jmp.auth.keyFile // specify privateSSHKey in production
-  var privateKeyContents = privateSSHKeyFile ? _fs.readFileSync(privateSSHKeyFile, { encoding: 'utf8' }).trim() : 'connectionSettings.tunnelConfig.dst.auth.keyStr'
+  var privateKeyContents = privateSSHKeyFile ? _fs.readFileSync(privateSSHKeyFile, { encoding: 'utf8' }).trim() : 'connectionSettings.tunnelConfig.jmp.auth.keyStr'
   return privateKeyContents;
 };
 
