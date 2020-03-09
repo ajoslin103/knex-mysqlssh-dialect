@@ -4,7 +4,7 @@
   "description": "Based on a copy of the Knex MySQL dialect, use connection counting to wrap an ssh tunnel around a connection pool",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -29,5 +29,10 @@
   "bugs": {
     "url": "https://github.com/ajoslin103/knex-mysqlssh-dialect/issues"
   },
-  "homepage": "https://github.com/ajoslin103/knex-mysqlssh-dialect#readme"
+  "homepage": "https://github.com/ajoslin103/knex-mysqlssh-dialect#readme",
+  "devDependencies": {
+    "babel-runtime": "^6.26.0",
+    "bluebird": "^3.7.2",
+    "jest": "^25.1.0"
+  }
 }
