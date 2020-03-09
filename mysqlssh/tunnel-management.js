@@ -63,10 +63,10 @@ function establishTunnel(config, tunnelRef) {
   })
 };
 
-function destroyTunnel() {
-  if (_server && _server.close) {
-    _server.close();
-    _server = null;
+function destroyTunnel(serverRef) {
+  if (serverRef && serverRef.close) {
+    serverRef.close();
+    serverRef = null;
   }
 };
 

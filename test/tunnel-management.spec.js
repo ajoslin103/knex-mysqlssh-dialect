@@ -46,6 +46,12 @@ describe('Testing how we build up & tear down the tunnel', () => {
     test('it should start with zero connections open', () => {
         expect(mysqlssh.getNumberOfConnections()).toBe(0)
     });
+    const serverRefCloses = {
+        close: () => { }
+    };
+    test('it should close a successful tunnel', async () => {
+        await expect(mysqlssh.destroyTunnel(serverRefCloses));
+    });
     const aConfig = require('./sample-config-password');
     const tunnelWillFail = function (cfg, callBackFn) {
         callBackFn('internal error', {});
