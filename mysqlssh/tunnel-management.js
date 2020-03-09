@@ -7,7 +7,32 @@ var _tunnel = require('tunnel-ssh');
 var _server = null;
 var _connectionCnt = 0;
 
-function verifyConfiguration(connectionSettings) {
+function verifyConfiguration(cfg) {
+  function assert(val, msg) { if (!val) { throw new Error(msg); } }
+  function assertString(val, msg) { assert(val, msg); if (typeof val !== 'string') { throw new Error(msg); } }
+  function assertNumber(val, msg) { assert(val, msg); if (typeof val !== 'number') { throw new Error(msg); } }
+  function assertObject(val, msg) { assert(val, msg); if (typeof val !== 'object') { throw new Error(msg); } }
+  try {
+    assertObject(cfg, 'the given configuration is missing or not an object');
+    assertObject(cfg.tunnelConfig, 'tunnelConfig is missing or not an object within the given configuration');
+    assertObject(cfg.tunnelConfig.src, 'tunnelConfig.src is missing or not an object within the given configuration');
+    assertString(cfg.tunnelConfig.src.host, 'tunnelConfig.src.host is missing or not a string within the given configuration');
+    assertNumber(cfg.tunnelConfig.src.port, 'tunnelConfig.src.port is missing or not a number within the given configuration');
+    assertObject(cfg.tunnelConfig.dst, 'tunnelConfig.dst is missing or not an object within the given configuration');
+    assertString(cfg.tunnelConfig.dst.host, 'tunnelConfig.dst.host is missing or not a string within the given configuration');
+    assertNumber(cfg.tunnelConfig.dst.port, 'tunnelConfig.dst.port is missing or not a number within the given configuration');
+    assertObject(cfg.tunnelConfig.jmp, 'tunnelConfig.jmp is missing or not an object within the given configuration');
+    assertString(cfg.tunnelConfig.jmp.host, 'tunnelConfig.jmp.host is missing or not a string within the given configuration');
+    assertNumber(cfg.tunnelConfig.jmp.port, 'tunnelConfig.jmp.port is missing or not a number within the given configuration');
+    assertObject(cfg.tunnelConfig.jmp.auth, 'tunnelConfig.jmp.auth is missing or not an object within the given configuration');
+    assertString(cfg.tunnelConfig.jmp.auth.user, 'tunnelConfig.jmp.auth.user is missing or not a string within the given configuration');
+    assertString(cfg.tunnelConfig.jmp.auth.pass, 'tunnelConfig.jmp.auth.pass is missing or not a string within the given configuration');
+    assertString(cfg.tunnelConfig.jmp.auth.keyStr, 'tunnelConfig.jmp.auth.keyStr is missing or not a string within the given configuration');
+    assertString(cfg.tunnelConfig.jmp.auth.keyFile, 'tunnelConfig.jmp.auth.keyFile is missing or not a string within the given configuration');
+  } catch (error) {
+    console.error(error.message);
+    return false;
+  }
   return true;
 };
 
