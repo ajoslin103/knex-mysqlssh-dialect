@@ -92,6 +92,5 @@ describe('Testing how we build up & tear down the tunnel', () => {
     test('it should have zero connections open', () => {
         expect(mysqlssh.getNumberOfConnections()).toBe(0)
     });
-    mysqlssh.establishTunnel(aConfig, tunnelRef)
 });
 
