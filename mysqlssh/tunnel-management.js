@@ -66,22 +66,25 @@ function destroyTunnel() {
   if (_server && _server.close) { _server.close(); }
 };
 
-function incrementConnections(connectionSettings) {
+function incrementConnections(cfg) {
+  if (!verifyConfiguration(cfg)) {
+    throw new Error('invalid configuration supplied to incrementConnections()');
+  }
   var tnlPromise = Promise.resolve();
   if (_connectionCnt === 0) {
     var config = {
-      host: connectionSettings.tunnelConfig.jmp.host,
-      port: connectionSettings.tunnelConfig.jmp.port,
-      dstHost: connectionSettings.tunnelConfig.dst.host,
-      dstPort: connectionSettings.tunnelConfig.dst.port,
-      localHost: connectionSettings.tunnelConfig.src.host,
-      localPort: connectionSettings.tunnelConfig.src.port,
-      username: connectionSettings.tunnelConfig.jmp.auth.user,
-      password: connectionSettings.tunnelConfig.jmp.auth.pass,
-      privateKey: _getPrivateKey(connectionSettings),
+      host: cfg.tunnelConfig.jmp.host,
+      port: cfg.tunnelConfig.jmp.port,
+      dstHost: cfg.tunnelConfig.dst.host,
+      dstPort: cfg.tunnelConfig.dst.port,
+      localHost: cfg.tunnelConfig.src.host,
+      localPort: cfg.tunnelConfig.src.port,
+      username: cfg.tunnelConfig.jmp.auth.user,
+      password: cfg.tunnelConfig.jmp.auth.pass,
+      privateKey: getPrivateKey(cfg),
     };
     console.debug(`establishing tunnel from ${config.localHost} to ${config.dstHost} via ${config.host} for ${config.localPort}`);
-    tnlPromise = _establishTunnel(config);
+    tnlPromise = establishTunnel(config);
   }
   return tnlPromise
     .then(function () {
@@ -93,7 +96,7 @@ function incrementConnections(connectionSettings) {
 function decrementConnections() {
   _connectionCnt--;
   // console.debug(`${_connectionCnt} connections remaining`);
-  if (_connectionCnt === 0) { _destroyTunnel() }
+  if (_connectionCnt === 0) { destroyTunnel() }
 };
 
 module.exports = {
@@ -102,4 +105,5 @@ module.exports = {
   establishTunnel,
   destroyTunnel,
   decrementConnections,
+  incrementConnections,
 }

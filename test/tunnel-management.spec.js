@@ -5,6 +5,7 @@ describe('Testing Exports', () => {
         expect(mysqlssh.getPrivateKey).toBeDefined();
         expect(mysqlssh.establishTunnel).toBeDefined();
         expect(mysqlssh.destroyTunnel).toBeDefined();
+        expect(mysqlssh.incrementConnections).toBeDefined();
         expect(mysqlssh.decrementConnections).toBeDefined();
     })
 })
@@ -34,3 +35,4 @@ describe('Testing getPrivateKey', () => {
         expect(mysqlssh.getPrivateKey(withKeyFromStr) === trimmedKeyText).toBeTruthy();
     })
 })
+
