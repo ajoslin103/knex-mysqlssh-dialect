@@ -48,9 +48,12 @@ function getPrivateKey(cfg) {
   return privateKeyContents.trim();
 };
 
-function establishTunnel(config) {
+function establishTunnel(config, tunnelRef) {
+  if (!my.verifyConfiguration(config)) {
+    return Promise.reject(new Error('invalid configuration supplied to establishTunnel()'));
+  }
   return new Promise(function (resolve, reject) {
-    _server = _tunnel(config, function (err, server) {
+    _server = tunnelRef(config, function (err, server) {
       if (err) {
         console.error(err);
         reject(new Error(err));
@@ -71,7 +74,7 @@ function incrementConnections(cfg) {
   if (!my.verifyConfiguration(cfg)) {
     return Promise.reject(new Error('invalid configuration supplied to incrementConnections()'));
   }
-  var tnlPromise = Promise.resolve();
+  var tnlPromise = Promise.resolve(); // we'll just resolve if we are more than zero connections
   if (_connectionCnt === 0) {
     var config = {
       host: cfg.tunnelConfig.jmp.host,
@@ -85,7 +88,7 @@ function incrementConnections(cfg) {
       privateKey: my.getPrivateKey(cfg),
     };
     console.debug(`[knex-mysqlssh-dialect] establishing tunnel from ${config.localHost} to ${config.dstHost} via ${config.host} for ${config.localPort}`);
-    tnlPromise = my.establishTunnel(config);
+    tnlPromise = my.establishTunnel(config, _tunnel);
   }
   return tnlPromise
     .then(function () {
@@ -94,7 +97,7 @@ function incrementConnections(cfg) {
 };
 
 function decrementConnections() {
-  if (_connectionCnt === 1) { my.destroyTunnel() }
+  if (_connectionCnt === 1) { my.destroyTunnel(_server) }
   _connectionCnt = Math.max(_connectionCnt - 1, 0);
 };
 

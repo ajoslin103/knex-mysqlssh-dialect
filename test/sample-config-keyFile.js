@@ -7,14 +7,14 @@ module.exports = {
             },
             dst: {
                 host: 'localhost',
-                port: '3306a',
+                port: '3306',
             },
             jmp: {
                 host: '10.20.0.1',
                 port: 22,
                 auth: {
                     user: 'username',
-                    pass: 'password',
+                    keyFile: './test/keyfile.sample',
                 },
             },
         },
