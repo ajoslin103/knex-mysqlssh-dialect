@@ -177,11 +177,12 @@ function Client_MySQL(config) {
   // Used to explicitly close a connection, called internally by the pool
   // when a connection times out or the pool is shutdown.
   destroyRawConnection: function destroyRawConnection(connection) {
-    _decrementConnections();
     return _bluebird2.default.fromCallback(connection.end.bind(connection)).catch(function (err) {
       connection.__knex__disposed = err;
     }).finally(function () {
-      return connection.removeAllListeners();
+      const removalResult = connection.removeAllListeners();
+      _decrementConnections();
+      return removalResult;
     });
   },
   validateConnection: function validateConnection(connection) {
