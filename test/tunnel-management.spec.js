@@ -37,20 +37,27 @@ describe('Testing getPrivateKey', () => {
     })
 })
 
-describe('Testing incrementConnections', () => {
+describe('Testing incrementConnections & decrementConnections', () => {
     const mysqlssh = require('../mysqlssh/tunnel-management');
     const aConfig = require('./sample-config');
     const keyFile = './test/keyfile.sample';
     aConfig.connection.tunnelConfig.jmp.auth.keyFile = keyFile;
+    mysqlssh.destroyTunnel = jest.fn().mockReturnValue(0);
     mysqlssh.establishTunnel = jest.fn().mockResolvedValue(0);
     const establishTunnelSpy = jest.spyOn(mysqlssh, 'establishTunnel');
-    test('it should confirm we can incrementConnections', async () => {
+    const destroyTunnelSpy = jest.spyOn(mysqlssh, 'destroyTunnel');
+    test('it should only establishConnection once', async () => {
+        await mysqlssh.incrementConnections(aConfig.connection);
+        await mysqlssh.incrementConnections(aConfig.connection);
         await mysqlssh.incrementConnections(aConfig.connection);
         expect(establishTunnelSpy.mock.calls.length).toBe(1);
     })
-    test('it should only call establishConnection once', async () => {
-        await mysqlssh.incrementConnections(aConfig.connection);
-        await mysqlssh.incrementConnections(aConfig.connection);
-        expect(establishTunnelSpy.mock.calls.length).toBe(1);
+    test('it should only destroyConnection once', async () => {
+        await mysqlssh.decrementConnections(aConfig.connection);
+        await mysqlssh.decrementConnections(aConfig.connection);
+        await mysqlssh.decrementConnections(aConfig.connection);
+        await mysqlssh.decrementConnections(aConfig.connection);
+        expect(destroyTunnelSpy.mock.calls.length).toBe(1);
     })
 })
+
