@@ -7,7 +7,7 @@ module.exports = {
             },
             dst: {
                 host: 'localhost',
-                port: '3306',
+                port: '3306a',
             },
             jmp: {
                 host: '10.20.0.1',

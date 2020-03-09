@@ -14,8 +14,12 @@ describe('Testing that all exports are available', () => {
 describe('Testing that we can verify a configuration', () => {
     const mysqlssh = require('../mysqlssh/tunnel-management');
     const aConfig = require('./sample-config');
+    const badConfig = require('./sample-config-bad');
     test('it should confirm we can verify a configuration', () => {
         expect(mysqlssh.verifyConfiguration(aConfig.connection)).toBeTruthy();
+    })
+    test('it should confirm we can fail a configuration', () => {
+        expect(mysqlssh.verifyConfiguration(badConfig.connection)).toBeFalsy();
     })
 })
 
