@@ -4,7 +4,7 @@
   "description": "Based on a copy of the Knex MySQL dialect, use connection counting to wrap an ssh tunnel around a connection pool",
   "main": "index.js",
   "scripts": {
-    "coveralls": "jest --coverage && cat ./tests/coverage/lcov.info | coveralls",
+    "coveralls": "jest --collectCoverage && cat ./coverage/lcov.info | coveralls",
     "test": "jest --collectCoverage"
   },
   "repository": {
