@@ -56,15 +56,16 @@ function establishTunnel(config) {
         console.error(err);
         reject(new Error(err));
       }
-      // console.debug('tunnel established');
       resolve();
     });
   })
 };
 
 function destroyTunnel() {
-  // console.debug('closing tunnel');
-  if (_server && _server.close) { _server.close(); }
+  if (_server && _server.close) {
+    _server.close();
+    _server = null;
+  }
 };
 
 function incrementConnections(cfg) {
@@ -90,14 +91,12 @@ function incrementConnections(cfg) {
   return tnlPromise
     .then(function () {
       _connectionCnt++;
-      // console.debug(`supporting ${_connectionCnt} connections`);
     })
 };
 
 function decrementConnections() {
-  _connectionCnt--;
-  // console.debug(`${_connectionCnt} connections remaining`);
-  if (_connectionCnt === 0) { my.destroyTunnel() }
+  if (_connectionCnt === 1) { my.destroyTunnel() }
+  _connectionCnt = Math.max(_connectionCnt - 1, 0);
 };
 
 function getNumberOfConnections() {
