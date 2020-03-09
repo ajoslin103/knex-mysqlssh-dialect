@@ -1,3 +1,6 @@
+[![Known Vulnerabilities](https://snyk.io/test/github/ajoslin103/knex-mysqlssh-dialect/badge.svg?targetFile=package.json&style=flat-square)](https://snyk.io/test/github/ajoslin103/knex-mysqlssh-dialect?targetFile=package.json)
+
+
 # knex-mysqlssh-dialect
 
 Based on a copy of the Knex MySQL dialect, this library uses connection counting to wrap an ssh tunnel around a connection pool.
