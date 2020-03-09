@@ -69,7 +69,7 @@ function destroyTunnel() {
 
 function incrementConnections(cfg) {
   if (!my.verifyConfiguration(cfg)) {
-    throw new Error('invalid configuration supplied to incrementConnections()');
+    return Promise.reject(new Error('invalid configuration supplied to incrementConnections()'));
   }
   var tnlPromise = Promise.resolve();
   if (_connectionCnt === 0) {

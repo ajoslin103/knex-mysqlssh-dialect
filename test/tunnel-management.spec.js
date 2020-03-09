@@ -44,6 +44,7 @@ describe('Testing that we can process a private key', () => {
 describe('Testing that we only build up & tear down the tunnel once', () => {
     const mysqlssh = require('../mysqlssh/tunnel-management');
     const aConfig = require('./sample-config');
+    const badConfig = require('./sample-config-bad');
     const keyFile = './test/keyfile.sample';
     aConfig.connection.tunnelConfig.jmp.auth.keyFile = keyFile;
     mysqlssh.destroyTunnel = jest.fn().mockResolvedValue(0);
@@ -58,6 +59,10 @@ describe('Testing that we only build up & tear down the tunnel once', () => {
     })
     test('it should have opened 3 connections', () => {
         expect(mysqlssh.getNumberOfConnections()).toBe(3)
+    })
+    test('it should fail on a bad config', async () => {
+        await expect(mysqlssh.incrementConnections(badConfig.connection))
+            .rejects.toThrow('invalid configuration supplied to incrementConnections()');
     })
     test('it should only destroyConnection once', async () => {
         await mysqlssh.decrementConnections(aConfig.connection);
