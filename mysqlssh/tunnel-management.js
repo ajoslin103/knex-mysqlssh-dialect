@@ -36,9 +36,9 @@ function verifyConfiguration(cfg) {
   return true;
 };
 
-function getPrivateKey(connectionSettings) {
-  var privateSSHKeyFile = connectionSettings.tunnelConfig.jmp.auth.keyFile // specify privateSSHKey in production
-  var privateKeyContents = privateSSHKeyFile ? _fs.readFileSync(privateSSHKeyFile, { encoding: 'utf8' }) : connectionSettings.tunnelConfig.jmp.auth.keyStr
+function getPrivateKey(cfg) {
+  var privateSSHKeyFile = cfg.tunnelConfig.jmp.auth.keyFile // specify privateSSHKey in production
+  var privateKeyContents = privateSSHKeyFile ? _fs.readFileSync(privateSSHKeyFile, { encoding: 'utf8' }) : cfg.tunnelConfig.jmp.auth.keyStr
   return privateKeyContents.trim();
 };
 
