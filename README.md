@@ -75,6 +75,8 @@ For development I use a JUMP_KEYFILE environment variable to point to my local k
 
 In production I specify a JUMP_KEY environment variable to hold the contents of that same [private] local keyfile
 
+The SSH2 library works well with keys created with this shell command: ssh-keygen -m PEM -t rsa 
+
 ## Credits
 
 This package would not have been possible with the fine work of the developers and maintainers of [at least] the following packages
