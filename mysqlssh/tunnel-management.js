@@ -18,18 +18,18 @@ function verifyConfiguration(cfg) {
     _assertObject(cfg.tunnelConfig, 'tunnelConfig is missing or not an object within the given configuration');
     _assertObject(cfg.tunnelConfig.src, 'tunnelConfig.src is missing or not an object within the given configuration');
     _assertString(cfg.tunnelConfig.src.host, 'tunnelConfig.src.host is missing or not a string within the given configuration');
-    _assertNumber(cfg.tunnelConfig.src.port, 'tunnelConfig.src.port is missing or not a number within the given configuration');
+    _assertNumber(Number(cfg.tunnelConfig.src.port), 'tunnelConfig.src.port is missing or not a number within the given configuration');
     _assertObject(cfg.tunnelConfig.dst, 'tunnelConfig.dst is missing or not an object within the given configuration');
     _assertString(cfg.tunnelConfig.dst.host, 'tunnelConfig.dst.host is missing or not a string within the given configuration');
-    _assertNumber(cfg.tunnelConfig.dst.port, 'tunnelConfig.dst.port is missing or not a number within the given configuration');
+    _assertNumber(Number(cfg.tunnelConfig.dst.port), 'tunnelConfig.dst.port is missing or not a number within the given configuration');
     _assertObject(cfg.tunnelConfig.jmp, 'tunnelConfig.jmp is missing or not an object within the given configuration');
     _assertString(cfg.tunnelConfig.jmp.host, 'tunnelConfig.jmp.host is missing or not a string within the given configuration');
-    _assertNumber(cfg.tunnelConfig.jmp.port, 'tunnelConfig.jmp.port is missing or not a number within the given configuration');
+    _assertNumber(Number(cfg.tunnelConfig.jmp.port), 'tunnelConfig.jmp.port is missing or not a number within the given configuration');
     _assertObject(cfg.tunnelConfig.jmp.auth, 'tunnelConfig.jmp.auth is missing or not an object within the given configuration');
     _assertString(cfg.tunnelConfig.jmp.auth.user, 'tunnelConfig.jmp.auth.user is missing or not a string within the given configuration');
-    _assertString(cfg.tunnelConfig.jmp.auth.pass, 'tunnelConfig.jmp.auth.pass is missing or not a string within the given configuration');
-    _assertString(cfg.tunnelConfig.jmp.auth.keyStr, 'tunnelConfig.jmp.auth.keyStr is missing or not a string within the given configuration');
-    _assertString(cfg.tunnelConfig.jmp.auth.keyFile, 'tunnelConfig.jmp.auth.keyFile is missing or not a string within the given configuration');
+    _assertString(cfg.tunnelConfig.jmp.auth.pass || 'optional', 'tunnelConfig.jmp.auth.pass is not a string within the given configuration');
+    _assertString(cfg.tunnelConfig.jmp.auth.keyStr || 'optional', 'tunnelConfig.jmp.auth.keyStr is not a string within the given configuration');
+    _assertString(cfg.tunnelConfig.jmp.auth.keyFile || 'optional', 'tunnelConfig.jmp.auth.keyFile is not a string within the given configuration');
   } catch (error) {
     console.error(error.message);
     return false;
@@ -49,7 +49,6 @@ function getPrivateKey(cfg) {
 };
 
 function establishTunnel(config) {
-  console.debug('establishing tunnel');
   return new Promise(function (resolve, reject) {
     _server = _tunnel(config, function (err, server) {
       if (err) {
@@ -85,7 +84,7 @@ function incrementConnections(cfg) {
       password: cfg.tunnelConfig.jmp.auth.pass,
       privateKey: my.getPrivateKey(cfg),
     };
-    console.debug(`establishing tunnel from ${config.localHost} to ${config.dstHost} via ${config.host} for ${config.localPort}`);
+    console.debug(`[knex-mysqlssh-dialect] establishing tunnel from ${config.localHost} to ${config.dstHost} via ${config.host} for ${config.localPort}`);
     tnlPromise = my.establishTunnel(config);
   }
   return tnlPromise
