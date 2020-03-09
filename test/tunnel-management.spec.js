@@ -25,11 +25,11 @@ describe('Testing getPrivateKey', () => {
     const keyFilePath = path.resolve(keyFile);
     const keyText = fs.readFileSync(keyFilePath, { encoding: 'utf8' });
     const trimmedKeyText = keyText.trim();
-    const withKeyFromFile = { tunnelConfig: { jmp: { auth: { keyFile: keyFilePath } } } };
+    const withKeyFromFile = { tunnelConfig: { jmp: { auth: { keyFile: keyFilePath, keyStr: '' } } } };
     test('it should confirm we can read a private key from a file', () => {
         expect(mysqlssh.getPrivateKey(withKeyFromFile) === trimmedKeyText).toBeTruthy();
     })
-    const withKeyFromStr = { tunnelConfig: { jmp: { auth: { keyStr: trimmedKeyText } } } };
+    const withKeyFromStr = { tunnelConfig: { jmp: { auth: { keyStr: trimmedKeyText, keyFile: '' } } } };
     test('it should confirm we can use a private key from a string', () => {
         expect(mysqlssh.getPrivateKey(withKeyFromStr) === trimmedKeyText).toBeTruthy();
     })
