@@ -49,6 +49,7 @@ function getPrivateKey(cfg) {
 };
 
 function establishTunnel(config) {
+  console.debug('establishing tunnel');
   return new Promise(function (resolve, reject) {
     _server = _tunnel(config, function (err, server) {
       if (err) {
@@ -67,7 +68,7 @@ function destroyTunnel() {
 };
 
 function incrementConnections(cfg) {
-  if (!verifyConfiguration(cfg)) {
+  if (!my.verifyConfiguration(cfg)) {
     throw new Error('invalid configuration supplied to incrementConnections()');
   }
   var tnlPromise = Promise.resolve();
@@ -81,10 +82,10 @@ function incrementConnections(cfg) {
       localPort: cfg.tunnelConfig.src.port,
       username: cfg.tunnelConfig.jmp.auth.user,
       password: cfg.tunnelConfig.jmp.auth.pass,
-      privateKey: getPrivateKey(cfg),
+      privateKey: my.getPrivateKey(cfg),
     };
     console.debug(`establishing tunnel from ${config.localHost} to ${config.dstHost} via ${config.host} for ${config.localPort}`);
-    tnlPromise = establishTunnel(config);
+    tnlPromise = my.establishTunnel(config);
   }
   return tnlPromise
     .then(function () {
@@ -96,14 +97,21 @@ function incrementConnections(cfg) {
 function decrementConnections() {
   _connectionCnt--;
   // console.debug(`${_connectionCnt} connections remaining`);
-  if (_connectionCnt === 0) { destroyTunnel() }
+  if (_connectionCnt === 0) { my.destroyTunnel() }
 };
 
-module.exports = {
+function getNumberOfConnections() {
+  return _connectionCnt;
+};
+
+const my = {
   verifyConfiguration,
   getPrivateKey,
   establishTunnel,
   destroyTunnel,
   decrementConnections,
   incrementConnections,
-}
+  getNumberOfConnections,
+};
+
+module.exports = my;

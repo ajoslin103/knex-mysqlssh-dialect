@@ -7,6 +7,7 @@ describe('Testing Exports', () => {
         expect(mysqlssh.destroyTunnel).toBeDefined();
         expect(mysqlssh.incrementConnections).toBeDefined();
         expect(mysqlssh.decrementConnections).toBeDefined();
+        expect(mysqlssh.getNumberOfConnections).toBeDefined();
     })
 })
 
@@ -36,3 +37,20 @@ describe('Testing getPrivateKey', () => {
     })
 })
 
+describe('Testing incrementConnections', () => {
+    const mysqlssh = require('../mysqlssh/tunnel-management');
+    const aConfig = require('./sample-config');
+    const keyFile = './test/keyfile.sample';
+    aConfig.connection.tunnelConfig.jmp.auth.keyFile = keyFile;
+    mysqlssh.establishTunnel = jest.fn().mockResolvedValue(0);
+    const establishTunnelSpy = jest.spyOn(mysqlssh, 'establishTunnel');
+    test('it should confirm we can incrementConnections', async () => {
+        await mysqlssh.incrementConnections(aConfig.connection);
+        expect(establishTunnelSpy.mock.calls.length).toBe(1);
+    })
+    test('it should only call establishConnection once', async () => {
+        await mysqlssh.incrementConnections(aConfig.connection);
+        await mysqlssh.incrementConnections(aConfig.connection);
+        expect(establishTunnelSpy.mock.calls.length).toBe(1);
+    })
+})
