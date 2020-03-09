@@ -1,6 +1,6 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/ajoslin103/knex-mysqlssh-dialect/badge.svg?targetFile=package.json&style=flat-square)](https://snyk.io/test/github/ajoslin103/knex-mysqlssh-dialect?targetFile=package.json)
 [![Build Status](https://travis-ci.org/ajoslin103/knex-mysqlssh-dialect.png?branch=master)](https://travis-ci.org/ajoslin103/knex-mysqlssh-dialect)
-
+[![Coverage Status](https://coveralls.io/repos/github/ajoslin103/knex-mysqlssh-dialect/badge.svg?branch=master)](https://coveralls.io/github/ajoslin103/knex-mysqlssh-dialect?branch=master)
 
 
 # knex-mysqlssh-dialect
