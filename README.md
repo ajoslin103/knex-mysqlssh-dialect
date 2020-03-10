@@ -2,7 +2,6 @@
 [![Build Status](https://travis-ci.org/ajoslin103/knex-mysqlssh-dialect.png?branch=master)](https://travis-ci.org/ajoslin103/knex-mysqlssh-dialect)
 [![Coverage Status](https://coveralls.io/repos/github/ajoslin103/knex-mysqlssh-dialect/badge.svg?branch=master)](https://coveralls.io/github/ajoslin103/knex-mysqlssh-dialect?branch=master)
 
-
 # knex-mysqlssh-dialect
 
 Based on a copy of the Knex MySQL dialect, this library uses connection counting to wrap an ssh tunnel around a connection pool.
