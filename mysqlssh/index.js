@@ -93,6 +93,8 @@ function Client_MySQL(config) {
         .then(function () {
           var connection = _this.driver.createConnection(_this.connectionSettings);
           connection.on('error', function (err) {
+            console.error(err.message, '[knex-mysqlssh-dialect] database connection errored out, decrement the counters');
+            _tunnelManager.decrementConnections();
             connection.__knex__disposed = err;
           });
           connection.connect(function (err) {

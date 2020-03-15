@@ -31,7 +31,7 @@ function verifyConfiguration(cfg) {
     _assertString(cfg.tunnelConfig.jmp.auth.keyStr || 'optional', 'tunnelConfig.jmp.auth.keyStr is not a string within the given configuration');
     _assertString(cfg.tunnelConfig.jmp.auth.keyFile || 'optional', 'tunnelConfig.jmp.auth.keyFile is not a string within the given configuration');
   } catch (error) {
-    console.error(error.message);
+    console.error('[knex-mysqlssh-dialect]', error.message);
     return false;
   }
   return true;
@@ -50,7 +50,7 @@ function verifyTunnelCfg(cfg) {
     _assertString(cfg.password || 'optional', 'password is not a string within the given configuration');
     _assertString(cfg.privateKey || 'optional', 'privateKey is not a string within the given configuration');
   } catch (error) {
-    console.error(error.message);
+    console.error('[knex-mysqlssh-dialect]', error.message);
     return false;
   }
   return true;
@@ -69,7 +69,7 @@ function _getPrivateKey(cfg) {
 
 function _establishTunnel(config, tunnelRef) {
   if (!my.verifyTunnelCfg(config)) {
-    return Promise.reject(new Error('invalid configuration supplied to _establishTunnel()'));
+    return Promise.reject(new Error('[knex-mysqlssh-dialect] invalid configuration supplied to _establishTunnel()'));
   }
   return new Promise(function (resolve, reject) {
     _server = tunnelRef(config, function (err, server) {
@@ -77,6 +77,10 @@ function _establishTunnel(config, tunnelRef) {
         console.error(err);
         reject(new Error(err));
       }
+      _server.on('error', function (err) {
+        console.error(err.message, '[knex-mysqlssh-dialect] the jump server errored, zeroing all connection counters');
+        _connectionCnt = 0;
+      });
       resolve();
     });
   })
@@ -91,7 +95,7 @@ function _destroyTunnel(serverRef) {
 
 function incrementConnections(cfg) {
   if (!my.verifyConfiguration(cfg)) {
-    return Promise.reject(new Error('invalid configuration supplied to incrementConnections()'));
+    return Promise.reject(new Error('[knex-mysqlssh-dialect] invalid configuration supplied to incrementConnections()'));
   }
   var tnlPromise = Promise.resolve(); // we'll just resolve if we are more than zero connections
   if (_connectionCnt === 0) {
@@ -116,7 +120,10 @@ function incrementConnections(cfg) {
 };
 
 function decrementConnections() {
-  if (_connectionCnt === 1) { my._destroyTunnel(_server) }
+  if (_connectionCnt === 1) {
+    console.debug(`[knex-mysqlssh-dialect] destroying tunnel`);
+    my._destroyTunnel(_server)
+  }
   _connectionCnt = Math.max(_connectionCnt - 1, 0);
 };
 
