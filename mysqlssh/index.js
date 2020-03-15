@@ -105,7 +105,7 @@ function Client_MySQL(config) {
           })
         })
         .catch(function (error) {
-          return rejecter(err);
+          return rejecter(error);
         });
     });
   },
