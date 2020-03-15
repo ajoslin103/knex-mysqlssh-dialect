@@ -37,7 +37,26 @@ function verifyConfiguration(cfg) {
   return true;
 };
 
-function getPrivateKey(cfg) {
+function verifyTunnelCfg(cfg) {
+  try {
+    _assertObject(cfg, 'the given configuration is missing or not an object');
+    _assertString(cfg.host, 'host is missing or not a string within the given configuration');
+    _assertNumber(Number(cfg.port), 'port is missing or not a number within the given configuration');
+    _assertString(cfg.dstHost, 'dstHost is missing or not a string within the given configuration');
+    _assertNumber(Number(cfg.dstPort), 'dstPort is missing or not a number within the given configuration');
+    _assertString(cfg.localHost, 'localHost is missing or not a string within the given configuration');
+    _assertNumber(Number(cfg.localPort), 'localPort is missing or not a number within the given configuration');
+    _assertString(cfg.username, 'username is missing or not a string within the given configuration');
+    _assertString(cfg.password || 'optional', 'password is not a string within the given configuration');
+    _assertString(cfg.privateKey || 'optional', 'privateKey is not a string within the given configuration');
+  } catch (error) {
+    console.error(error.message);
+    return false;
+  }
+  return true;
+};
+
+function _getPrivateKey(cfg) {
   _assertObject(cfg, 'the given configuration is missing or not an object');
   _assertObject(cfg.tunnelConfig, 'tunnelConfig is missing or not an object within the given configuration');
   _assertObject(cfg.tunnelConfig.jmp, 'tunnelConfig.jmp is missing or not an object within the given configuration');
@@ -48,9 +67,9 @@ function getPrivateKey(cfg) {
   return privateKeyContents.trim();
 };
 
-function establishTunnel(config, tunnelRef) {
-  if (!my.verifyConfiguration(config)) {
-    return Promise.reject(new Error('invalid configuration supplied to establishTunnel()'));
+function _establishTunnel(config, tunnelRef) {
+  if (!my.verifyTunnelCfg(config)) {
+    return Promise.reject(new Error('invalid configuration supplied to _establishTunnel()'));
   }
   return new Promise(function (resolve, reject) {
     _server = tunnelRef(config, function (err, server) {
@@ -63,7 +82,7 @@ function establishTunnel(config, tunnelRef) {
   })
 };
 
-function destroyTunnel(serverRef) {
+function _destroyTunnel(serverRef) {
   if (serverRef && serverRef.close) {
     serverRef.close();
     serverRef = null;
@@ -85,10 +104,10 @@ function incrementConnections(cfg) {
       localPort: cfg.tunnelConfig.src.port,
       username: cfg.tunnelConfig.jmp.auth.user,
       password: cfg.tunnelConfig.jmp.auth.pass,
-      privateKey: my.getPrivateKey(cfg),
+      privateKey: my._getPrivateKey(cfg),
     };
     console.debug(`[knex-mysqlssh-dialect] establishing tunnel from ${config.localHost} to ${config.dstHost} via ${config.host} for ${config.localPort}`);
-    tnlPromise = my.establishTunnel(config, _tunnel);
+    tnlPromise = my._establishTunnel(config, _tunnel);
   }
   return tnlPromise
     .then(function () {
@@ -97,7 +116,7 @@ function incrementConnections(cfg) {
 };
 
 function decrementConnections() {
-  if (_connectionCnt === 1) { my.destroyTunnel(_server) }
+  if (_connectionCnt === 1) { my._destroyTunnel(_server) }
   _connectionCnt = Math.max(_connectionCnt - 1, 0);
 };
 
@@ -105,14 +124,16 @@ function getNumberOfConnections() {
   return _connectionCnt;
 };
 
+// we export _establishTunnel, _destroyTunnel and _getPrivateKey for testing purposes only
 const my = {
+  verifyTunnelCfg,
   verifyConfiguration,
-  getPrivateKey,
-  establishTunnel,
-  destroyTunnel,
   decrementConnections,
   incrementConnections,
   getNumberOfConnections,
+  _establishTunnel,
+  _destroyTunnel,
+  _getPrivateKey,
 };
 
 module.exports = my;
