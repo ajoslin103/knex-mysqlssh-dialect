@@ -12,7 +12,7 @@
     "url": "git+https://github.com/ajoslin103/knex-mysqlssh-dialect.git"
   },
   "dependencies": {
-    "tunnel-ssh": "^4.1.4"
+    "tunnel-ssh": "^5.0.0"
   },
   "keywords": [
     "node",
